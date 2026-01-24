@@ -1,6 +1,6 @@
-# Superpowers
+# Myskills
 
-Superpowers is a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
+Myskills is a fork of [Superpowers](https://github.com/obra/superpowers) - a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
 
 ## How it works
 
@@ -17,11 +17,7 @@ There's a bunch more to it, but that's the core of the system. And because the s
 
 ## Sponsorship
 
-If Superpowers has helped you do stuff that makes money and you are so inclined, I'd greatly appreciate it if you'd consider [sponsoring my opensource work](https://github.com/sponsors/obra).
-
-Thanks! 
-
-- Jesse
+This is a fork of Superpowers. If you find this fork helpful, please consider [sponsoring the original Superpowers project](https://github.com/sponsors/obra).
 
 
 ## Installation
@@ -33,13 +29,13 @@ Thanks!
 In Claude Code, register the marketplace first:
 
 ```bash
-/plugin marketplace add obra/superpowers-marketplace
+/plugin marketplace add IAliceBobI/my-marketplace
 ```
 
 Then install the plugin from this marketplace:
 
 ```bash
-/plugin install superpowers@superpowers-marketplace
+/plugin install myskills@my-marketplace
 ```
 
 ### Verify Installation
@@ -52,9 +48,9 @@ Check that commands appear:
 
 ```
 # Should see:
-# /superpowers:brainstorm - Interactive design refinement
-# /superpowers:write-plan - Create implementation plan
-# /superpowers:execute-plan - Execute plan in batches
+# /myskills:brainstorm - Interactive design refinement
+# /myskills:write-plan - Create implementation plan
+# /myskills:execute-plan - Execute plan in batches
 ```
 
 ### Codex
@@ -146,7 +142,7 @@ See `skills/writing-skills/SKILL.md` for the complete guide.
 Skills update automatically when you update the plugin:
 
 ```bash
-/plugin update superpowers
+/plugin update myskills
 ```
 
 ## License
@@ -155,5 +151,6 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-- **Issues**: https://github.com/obra/superpowers/issues
-- **Marketplace**: https://github.com/obra/superpowers-marketplace
+- **Original Project**: https://github.com/obra/superpowers
+- **This Fork**: https://github.com/IAliceBobI/myskills
+- **Marketplace**: https://github.com/IAliceBobI/my-marketplace

@@ -1,0 +1,20 @@
+{
+  "name": "myskills-dev",
+  "description": "Development marketplace for myskills (a fork of Superpowers)",
+  "owner": {
+    "name": "Jesse Vincent",
+    "email": "jesse@fsck.com"
+  },
+  "plugins": [
+    {
+      "name": "myskills",
+      "description": "My fork of superpowers - An agentic skills framework & software development methodology",
+      "version": "4.1.1",
+      "source": "./",
+      "author": {
+        "name": "Jesse Vincent",
+        "email": "jesse@fsck.com"
+      }
+    }
+  ]
+}
