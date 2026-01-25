@@ -284,6 +284,77 @@ fn complex_feature(input: Input) -> Result<Output, Error> {
 }
 ```
 
+## 🧪 测试特性（test-utils）最佳实践
+
+在编写测试代码时,如果需要在源码中添加测试辅助功能,应该使用 **条件编译特性** 来隔离测试代码:
+
+### 使用 test-utils 特性
+
+当测试需要访问源码中的内部辅助函数或 mock 功能时:
+
+```rust
+// ✅ 正确: 在 src/lib.rs 或其他源文件中使用特性门控
+#[cfg(feature = "test-utils")]
+pub mod testing {
+    pub use super::internal_helpers;
+
+    pub fn create_test_client() -> Client {
+        // 测试专用的构造函数
+        Client::new_for_testing()
+    }
+}
+
+// 生产代码不会被编译
+#[cfg(not(feature = "test-utils"))]
+fn internal_helpers() {
+    // 只在测试时可用
+}
+```
+
+### 在 Cargo.toml 中声明特性
+
+```toml
+[features]
+test-utils = []  # 不启用默认,测试时手动启用
+```
+
+### 运行测试时启用特性
+
+**重要**: 如果项目使用了 test-utils 特性,在检查和运行测试时必须启用该特性:
+
+```bash
+# ❌ 错误: 如果代码依赖 test-utils,这会编译失败
+cargo test
+cargo check
+
+# ✅ 正确: 启用 test-utils 特性
+cargo test --features test-utils
+cargo check --features test-utils
+
+# CI/CD 中应该启用所有相关特性
+cargo test --all-features
+# 或者
+cargo test --features "test-utils,other-features"
+```
+
+### 为什么这样做?
+
+- ✅ **减小二进制大小**: 生产构建不包含测试代码
+- ✅ **防止滥用**: 测试辅助函数不会在生产代码中意外调用
+- ✅ **清晰分离**: 明确区分生产代码和测试代码
+- ✅ **避免泄露**: 内部实现细节不会暴露给生产用户
+
+### 检查清单
+
+在编写测试相关代码时:
+
+- [ ] 测试辅助代码放在 `src/testing.rs` 或类似模块中
+- [ ] 使用 `#[cfg(feature = "test-utils")]` 门控测试代码
+- [ ] 在 `Cargo.toml` 中声明 `test-utils` 特性(不启用默认)
+- [ ] 运行 `cargo test` 时加上 `--features test-utils`
+- [ ] 在 CI/CD 中使用 `--all-features` 或明确指定特性
+- [ ] 文档中说明如何启用 test-utils 特性进行测试
+
 ## ✅ 正确使用场景（排除规则）
 
 以下情况**可以**使用上述模式：
@@ -293,6 +364,16 @@ fn complex_feature(input: Input) -> Result<Output, Error> {
 #[test]
 fn test_something() {
     let result = function_under_test().unwrap();  // ✅ 测试中可以
+}
+```
+
+### 使用 test-utils 特性的测试辅助代码
+```rust
+// ✅ 源码中的测试辅助函数
+#[cfg(feature = "test-utils")]
+pub fn setup_test_db() -> Database {
+    // 测试专用的数据库设置
+    Database::in_memory()
 }
 ```
 
@@ -495,6 +576,9 @@ cargo clippy -- -W clippy::indexing_slicing
 - [ ] 函数返回重要结果时标记了 `#[must_use]`
 - [ ] 通过 `cargo clippy` 检查没有警告
 - [ ] 通过 `cargo test` 确保所有测试通过
+- [ ] **如果使用了 test-utils 特性,测试时使用 `--features test-utils`**
+- [ ] **源码中的测试辅助代码使用 `#[cfg(feature = "test-utils")]` 门控**
+- [ ] **生产构建验证: `cargo build --release` 不包含测试代码**
 
 ---
 
@@ -511,10 +595,14 @@ cargo clippy -- -W clippy::unwrap_used -W clippy::expect_used
 # 优先处理可能导致生产事故的问题
 
 # 4. 运行测试确保没有破坏功能
-cargo test
+# 如果项目使用 test-utils 特性,需要加上 --features test-utils
+cargo test --features test-utils  # 或 --all-features
 
-# 5. 提交前再次检查
-cargo clippy && cargo test
+# 5. 验证生产构建不包含测试代码
+cargo build --release
+
+# 6. 提交前再次检查
+cargo clippy && cargo test --features test-utils
 ```
 
 ---

@@ -85,8 +85,9 @@ python3 scripts/run_rust_tests.py test_login
 # 运行指定包的测试
 python3 scripts/run_rust_tests.py --package my-package
 
-# 启用 features
-python3 scripts/run_rust_tests.py --features "full"
+# 启用 features (如果项目使用 test-utils 特性)
+python3 scripts/run_rust_tests.py --features "test-utils"
+python3 scripts/run_rust_tests.py --features "full"  # 或 --all-features
 ```
 
 ### 3. 完整的质量检查流程
@@ -98,16 +99,18 @@ python3 scripts/run_rust_tests.py --features "full"
 cargo fmt --check
 
 # 2. Clippy 检查（启用严格模式）
-cargo clippy -- -W clippy::unwrap_used -W clippy::expect_used
+# 如果项目使用 test-utils 特性,需要加上 --features test-utils
+cargo clippy --features test-utils -- -W clippy::unwrap_used -W clippy::expect_used
 
 # 3. 错误容忍检查
 python3 scripts/check_error_tolerance.py
 
 # 4. 运行测试
-python3 scripts/run_rust_tests.py
+# 如果项目使用 test-utils 特性,需要加上 --features test-utils
+python3 scripts/run_rust_tests.py --features test-utils
 
 # 5. 检查测试覆盖率（可选）
-cargo llvm-cov --html
+cargo llvm-cov --html --features test-utils
 ```
 
 ## 核心标准
@@ -166,6 +169,61 @@ match operation() {
 - **Binary 代码** (main.rs): 使用 `anyhow` 简化错误处理
 - **测试代码**: 使用 `anyhow` 或简单的 `expect()`
 
+### 测试特性（test-utils）最佳实践
+
+在编写测试代码时,如果需要在源码中添加测试辅助功能,应该使用 **条件编译特性** 来隔离测试代码:
+
+#### 使用 test-utils 特性
+
+```rust
+// ✅ 正确: 在 src/lib.rs 中使用特性门控
+#[cfg(feature = "test-utils")]
+pub mod testing {
+    pub use super::internal_helpers;
+
+    pub fn create_test_client() -> Client {
+        Client::new_for_testing()
+    }
+}
+
+// 生产代码不会被编译
+#[cfg(not(feature = "test-utils"))]
+fn internal_helpers() {
+    // 只在测试时可用
+}
+```
+
+#### 在 Cargo.toml 中声明
+
+```toml
+[features]
+test-utils = []  # 不启用默认,测试时手动启用
+```
+
+#### 运行测试时启用特性
+
+**重要**: 如果项目使用了 test-utils 特性,必须启用该特性:
+
+```bash
+# ❌ 错误: 如果代码依赖 test-utils,这会编译失败
+cargo test
+cargo check
+
+# ✅ 正确: 启用 test-utils 特性
+cargo test --features test-utils
+cargo check --features test-utils
+cargo clippy --features test-utils
+
+# CI/CD 中
+cargo test --all-features
+```
+
+#### 为什么这样做?
+
+- ✅ **减小二进制大小**: 生产构建不包含测试代码
+- ✅ **防止滥用**: 测试辅助函数不会在生产代码中意外调用
+- ✅ **清晰分离**: 明确区分生产代码和测试代码
+
 ### 测试标准
 
 - ✅ 每个公共函数都有测试
@@ -174,6 +232,8 @@ match operation() {
 - ✅ 测试边界条件和错误情况
 - ✅ 保持测试简单和独立
 - ❌ 避免在测试中使用 `std::env::set_var()`
+- ✅ **源码中的测试辅助代码使用 `#[cfg(feature = "test-utils")]` 门控**
+- ✅ **运行测试时使用 `--features test-utils` 如果项目使用了该特性**
 
 ## 工作流程
 
@@ -231,7 +291,9 @@ jobs:
 
       # 运行测试
       - name: Run tests
+        # 如果项目使用 test-utils 特性,使用 --all-features 或明确指定
         run: cargo test --all-features
+        # 或者: cargo test --features "test-utils,other-features"
 ```
 
 ## 常见问题修复
@@ -391,6 +453,9 @@ cargo clippy -- -D warnings
 - [ ] 测试命名清晰
 - [ ] 没有在测试中使用 `std::env::set_var()`
 - [ ] 所有测试通过
+- [ ] **如果使用了 test-utils 特性,测试时启用该特性**
+- [ ] **源码中的测试辅助代码使用 `#[cfg(feature = "test-utils")]` 门控**
+- [ ] **生产构建不包含测试代码: `cargo build --release` 验证**
 
 ### 代码质量
 - [ ] 通过 `cargo fmt --check` 格式检查
@@ -432,10 +497,17 @@ python3 scripts/check_error_tolerance.py
 python3 scripts/run_rust_tests.py
 
 # 完整检查流程
+# 如果项目使用 test-utils 特性,加上 --features test-utils
 cargo fmt --check && \
-cargo clippy -- -W clippy::unwrap_used -W clippy::expect_used && \
+cargo clippy --features test-utils -- -W clippy::unwrap_used -W clippy::expect_used && \
 python3 scripts/check_error_tolerance.py && \
-cargo test
+cargo test --features test-utils
+
+# 或者使用 --all-features
+cargo fmt --check && \
+cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && \
+python3 scripts/check_error_tolerance.py && \
+cargo test --all-features
 ```
 
 ## 进阶使用
@@ -468,8 +540,10 @@ set -e
 echo "🔍 Running pre-commit checks..."
 
 cargo fmt --check
-cargo clippy -- -D warnings
+# 如果项目使用 test-utils 特性,加上 --features test-utils
+cargo clippy --features test-utils -- -D warnings
 python3 scripts/check_error_tolerance.py
+# 启用所有需要的特性运行测试
 cargo test --all-features
 
 echo "✅ All checks passed!"
