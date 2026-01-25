@@ -2,3 +2,4 @@
 .private-journal/
 .claude/
 temp/
+__pycache__
