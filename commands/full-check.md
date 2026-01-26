@@ -5,6 +5,23 @@ description: "使用 rust-quality-guard skill 执行全面的代码检查和测�
 # 全面检查和测试命令
 
 > **快捷方式**: 使用 `rust-quality-guard` skill 提供的自动化脚本和检查流程
+> **测试工具**: 使用 `cargo nextest` 替代 `cargo test` 以获得更快的执行速度和更强大的功能
+
+## 安装 cargo-nextest
+
+```bash
+# 使用 cargo install
+cargo install cargo-nextest
+
+# 或使用预编译二进制文件
+# 访问: https://nexte.st/docs/installation/pre-built-binaries/
+```
+
+cargo-nextest 主要优势:
+- ⚡ 更快的执行速度 - 并行运行测试
+- 🎯 简洁的结果展示 - 清晰显示测试通过/失败状态
+- 🔧 强大的功能 - 支持重试、超时、机器可读输出等
+- 🔄 自动重试 - 失败的测试可以自动重试
 
 ## 快速使用
 
@@ -13,13 +30,13 @@ description: "使用 rust-quality-guard skill 执行全面的代码检查和测�
 cargo fmt --check && \
 cargo clippy --features test-utils -- -W clippy::unwrap_used -W clippy::expect_used && \
 python3 scripts/check_error_tolerance.py && \
-cargo test --features test-utils
+cargo nextest run --features test-utils --retries 3
 
 # 或者使用 --all-features
 cargo fmt --check && \
 cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && \
 python3 scripts/check_error_tolerance.py && \
-cargo test --all-features
+cargo nextest run --all-features --retries 3
 ```
 
 ## 脚本位置
@@ -87,8 +104,8 @@ python3 scripts/check_error_tolerance.py
 # 使用 rust-quality-guard skill 提供的脚本
 python3 scripts/run_rust_tests.py $USE_TEST_UTILS
 
-# 或直接使用 cargo
-cargo test $USE_TEST_UTILS --no-fail-fast
+# 或直接使用 cargo nextest（推荐）
+cargo nextest run $USE_TEST_UTILS --retries 3 --no-fail-fast
 ```
 
 ## 使用 run_rust_tests.py 脚本
@@ -165,13 +182,13 @@ pub mod testing {
 ### 运行测试时启用
 
 ```bash
-# ✅ 正确
-cargo test --features test-utils
+# ✅ 正确（使用 cargo nextest）
+cargo nextest run --features test-utils --retries 3
 cargo check --features test-utils
 cargo clippy --features test-utils
 
 # ❌ 错误（如果代码依赖 test-utils）
-cargo test
+cargo nextest run
 ```
 
 ### 为什么这样做？
@@ -193,10 +210,11 @@ cargo test
 - [ ] 通过 `cargo fmt --check` 格式检查
 - [ ] 通过 `cargo clippy` 检查（启用严格模式）
 - [ ] 通过 `check_error_tolerance.py` 检查无高严重度问题
-- [ ] 所有测试通过
+- [ ] 所有测试通过（使用 `cargo nextest run`）
 - [ ] **如果使用 test-utils 特性，测试时启用该特性**
 - [ ] **测试辅助代码使用 `#[cfg(feature = "test-utils")]` 门控**
 - [ ] **生产构建不包含测试代码: `cargo build --release`**
+- [ ] **如果项目有 doctests，运行 `cargo test --doc`**
 
 ## Clippy 配置
 
@@ -224,11 +242,49 @@ cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used
 # 错误容忍检查
 python3 scripts/check_error_tolerance.py
 
-# 运行测试
-python3 scripts/run_rust_tests.py --all-features
+# 运行测试（使用 cargo nextest）
+cargo nextest run --all-features --retries 3
+
+# 运行特定测试
+cargo nextest run --all-features test_name1 test_name2
 
 # 完整流程（一行命令）
-cargo fmt --check && cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && python3 scripts/check_error_tolerance.py && cargo test --all-features
+cargo fmt --check && cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && python3 scripts/check_error_tolerance.py && cargo nextest run --all-features --retries 3
+```
+
+## cargo nextest 高级功能
+
+```bash
+# 控制失败行为
+cargo nextest run --no-fail-fast              # 运行所有测试，不因失败停止
+cargo nextest run --max-fail=5               # 最多允许 5 次失败
+cargo nextest run --max-fail=1:immediate     # 第一次失败后立即终止
+
+# 并行控制
+cargo nextest run -j 8                       # 使用 8 个并行线程
+
+# 只运行被忽略的测试
+cargo nextest run --run-ignored=only
+
+# 压力测试
+cargo nextest run --stress-count=100         # 每个测试运行 100 次
+cargo nextest run --stress-duration=24h      # 运行 24 小时
+```
+
+## cargo nextest 配置
+
+创建 `.config/nextest.toml`:
+
+```toml
+[profile.default]
+# 失败后继续运行
+fail-fast = false
+
+# 重试设置
+retries = 3
+
+# 测试线程数（可选，默认使用所有 CPU）
+# test-threads = 8
 ```
 
 ## 集成到 Git Hooks
@@ -244,7 +300,20 @@ echo "🔍 Running pre-commit checks..."
 cargo fmt --check
 cargo clippy --all-features -- -D warnings
 python3 scripts/check_error_tolerance.py
-cargo test --all-features
+cargo nextest run --all-features --retries 3
 
 echo "✅ All checks passed!"
 ```
+
+## 注意事项
+
+⚠️ **Doctests 不支持**: nextest 目前不支持 doctests，需要单独运行:
+```bash
+cargo test --doc
+```
+
+## 参考链接
+
+- 📖 [cargo-nextest 官方文档](https://nexte.st/)
+- 💻 [cargo-nextest GitHub](https://github.com/nextest-rs/nextest)
+- 📦 [cargo-nextest crates.io](https://crates.io/crates/cargo-nextest)
