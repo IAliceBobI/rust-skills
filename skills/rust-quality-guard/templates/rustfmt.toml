@@ -1,0 +1,128 @@
+# rustfmt.toml
+#
+# Rust 代码格式化配置文件
+# 用途：确保团队成员使用一致的代码风格
+#
+# 文档：https://github.com/rust-lang/rustfmt/blob/main/Configurations.md
+# 最佳实践（2026）：
+# - 总是使用 rustfmt.toml 配置文件（即使是空的）
+# - 使用 style_edition = "2024" 匹配最新 Rust 版本
+# - 在 CI/CD 中运行 cargo fmt --all --check
+
+# ===== 基本配置 =====
+
+# 使用 Rust 2024 版本的格式化风格
+# 推荐：2024（最新标准）
+# 选项：2015, 2018, 2021, 2024
+style_edition = "2024"
+
+# 最大代码行宽度（默认：100）
+max_width = 100
+
+# 使用硬 tabs（默认：false）
+hard_tabs = false
+
+# 每个 tab 的空格数（默认：4）
+tab_spaces = 4
+
+# ===== 导入配置 =====
+
+# 导入分组策略（默认：StdExternalCrate）
+# 选项：
+#   - "Preserve" - 保持原样
+#   - "StdExternalCrate" - 标准库 | 外部 crate | 本地 crate
+#   - "One" - 所有导入合并为一个组
+imports_granularity = "StdExternalCrate"
+
+# 导入排序（默认：ModuleAware）
+# 选项：
+#   - "Preserve" - 保持原样
+#   - "ModuleAware" - 按模块分组（推荐）
+#   - "Type" - 按类型分组
+#   - "Clone" - 按特性分组
+group_imports = "StdExternalCrate"
+
+# 重排列导入（默认：true）
+reorder_imports = true
+
+# 重排列模块（默认：true）
+reorder_modules = true
+
+# ===== 代码结构 =====
+
+# 使用小启发式（默认：Default）
+# 选项：Off, Default, Max
+# Max 会导致更多的换行和更少的合并
+use_small_heuristics = "Default"
+
+# 移除嵌套的括号（默认：true）
+remove_nested_parens = true
+
+# 合并派生宏（默认：true）
+merge_derives = true
+
+# ===== 注释配置 =====
+
+# 注释宽度（默认：80）
+comment_width = 80
+
+# 包装注释（默认：false）
+wrap_comments = false
+
+# 注释在 doc 注解中的缩进方式
+normalize_comments = true
+
+# ===== 字符串配置 =====
+
+# 格式化字符串字面量（默认：false）
+format_strings = false
+
+# 字符串字面量的最大宽度（默认：0，表示使用 max_width）
+string_lit_max_width = 0
+
+# ===== 结构体配置 =====
+
+# 结构体字段字面量的对齐方式（默认：ModeAndItem）
+# 选项：Item, Compact, ModeAndItem
+struct_field_align_threshold = 0
+
+# 结构体变体宽度（默认：35）
+struct_variant_width = 35
+
+# ===== 其他配置 =====
+
+# 是否在新行上放置 'else'（默认：false）
+control_brace_style = "AlwaysSameLine"
+
+# 缩进风格（默认："Block"）
+indent_style = "Block"
+
+# 在哪里放置左大括号
+brace_style = "SameLineWhere"
+
+# 空格分隔的 trait 边界
+space_before_colon = false
+space_after_colon = true
+
+# 单行 if/else 的最大长度
+single_line_if_else_max_width = 50
+
+# ===== 高级配置 =====
+
+# 链式格式化的最大宽度
+chain_width = 60
+
+# 单行函数的最大宽度
+single_line_let_else_max_width = 50
+
+# 空白行阈值
+blank_lines_upper_bound = 1
+blank_lines_lower_bound = 0
+
+# ===== 实验性功能 =====
+
+# 使用 try 展开的格式化
+# format_code_in_doc_comments = true
+
+# 在宏调用中使用统一缩进
+# normalize_macro_branches = true

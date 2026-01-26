@@ -1,0 +1,46 @@
+# rust-toolchain.toml
+#
+# Rust 工具链配置文件
+# 用途：确保团队成员和 CI/CD 使用相同的 Rust 版本和组件
+#
+# 文档：https://rust-lang.github.io/rustup/overrides.html
+#
+# 最佳实践（2026）：
+# 1. 在项目根目录创建此文件以确保版本一致性
+# 2. 提交到版本控制系统
+# 3. CI/CD 会自动使用此文件中的工具链
+# 4. 开发者运行 cargo 命令时会自动使用指定的版本
+
+[toolchain]
+# 指定 Rust 版本
+# 选项：
+#   - "stable" - 稳定版（推荐用于生产环境）
+#   - "nightly" - 每夜版（用于实验性特性）
+#   - "1.xx.x" - 特定版本号（推荐用于团队协作）
+#   - "2024-xx-xx" - 特定日期的 nightly 版本
+channel = "1.83.0"  # 使用稳定版本号（推荐）
+
+# 自动安装的组件
+# 常用组件：rustfmt, clippy, rust-src, rust-analyzer, llvm-tools-preview
+components = [
+    "rustfmt",      # 代码格式化工具
+    "clippy",       # Rust linter
+    "rust-src",     # 源代码（用于 rust-analyzer）
+    "rust-analyzer",# 语言服务器（编辑器支持）
+]
+
+# 需要支持的目标平台（交叉编译）
+# 例如：["aarch64-apple-darwin", "x86_64-unknown-linux-gnu"]
+# 如果不需要交叉编译，可以省略此字段
+targets = [
+    # "aarch64-apple-darwin",   # Apple Silicon (macOS ARM64)
+    # "x86_64-unknown-linux-gnu", # Linux x86_64
+]
+
+# 可选：指定工具链的文件名格式（新格式）
+# 对于新项目，使用 .toml 扩展名
+# 旧项目可能使用无扩展名的 rust-toolchain 文件
+#
+# 注意：
+# - 如果项目使用旧格式（无 .toml），内容为：1.83.0
+# - 新格式支持更多配置选项，推荐使用

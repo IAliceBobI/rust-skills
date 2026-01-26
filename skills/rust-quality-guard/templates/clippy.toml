@@ -1,0 +1,120 @@
+# clippy.toml
+#
+# Clippy (Rust Linter) 配置文件
+# 用途：配置 Clippy 的行为和检查规则
+#
+# 文档：https://doc.rust-lang.org/stable/clippy/lint_configuration.html
+# 最佳实践（2026）：
+# - 在 Cargo.toml 中使用 [lints.clippy] 配置（推荐）
+# - 使用此文件配置项目特定的禁用方法/类型
+# - 与 CI/CD 集成：cargo clippy -- -D warnings
+
+# =====================================================================
+# 允许/禁止配置
+# =====================================================================
+
+# 允许在测试代码中使用 unwrap 和 expect
+allow-expect-in-tests = true
+allow-unwrap-in-tests = true
+
+# 允许在示例代码中使用 unwrap 和 expect
+allow-unwrap-in-examples = false  # 示例应该展示最佳实践
+
+# 允许宏使用 unwrap（宏内部可能需要）
+allow-mixed-uninlined-format-args = true
+
+# =====================================================================
+# 禁用配置（disallowed-*）
+# =====================================================================
+
+# 禁止使用特定方法
+# 格式：path = "完整方法路径", reason = "原因"
+[[disallowed-methods]]
+path = "std::result::Result::unwrap"
+reason = "使用 ? 运算符替代 unwrap，避免 panic"
+
+[[disallowed-methods]]
+path = "std::option::Option::unwrap"
+reason = "使用 ? 运算符或 ok_or() 替代 unwrap，避免 panic"
+
+[[disallowed-methods]]
+path = "std::result::Result::expect"
+reason = "使用 ? 运算符和 context() 替代 expect"
+
+[[disallowed-methods]]
+path = "std::option::Option::expect"
+reason = "使用 ok_or() 或 ok_or_else() 替代 expect"
+
+# 禁止使用特定类型
+# 例如：强制使用 FxHashMap 而不是 HashMap
+# [[disallowed-types]]
+# path = "std::collections::HashMap"
+# reason = "使用 rustc-hash 的 FxHashMap 获得更好的性能"
+
+# 禁止使用特定标识符
+# 例如：禁止使用 foo/bar 等无意义的名称
+# [[disallowed-identifiers]]
+# path = "foo"
+# reason = "使用更具描述性的名称"
+
+# =====================================================================
+# 文档配置
+# =====================================================================
+
+# 文档需要示例
+missing-docs-in-private-items = false  # 私有项不需要文档
+
+# =====================================================================
+# 性能相关配置
+# =====================================================================
+
+# 临时文件的数量（用于某些检查）
+tmp-dir = ""  # 使用默认临时目录
+
+# =====================================================================
+# 杂项配置
+# =====================================================================
+
+# 是否允许用户配置的 lint 级别
+# (通常与 Cargo.toml 中的 [lints.clippy] 配合使用)
+
+# 绝对路径允许的模块
+absolute-paths-allowed-modules = ["std", "core", "alloc"]
+
+# =====================================================================
+# 正则表达式配置
+# =====================================================================
+
+# 正则表达式的最大复杂度
+regex-max-complexity = 250
+
+# 正则表达式的最大字节大小
+regex-max-size = 400
+
+# 正则表达式可接受的字符黑名单
+# regex-blacklisted-names = ["foo", "bar"]
+
+# =====================================================================
+# 第三方 crate 配置
+# =====================================================================
+
+# 对于某些第三方 crate，可能需要特定的配置
+# 例如：suppress-lint = true 用于某些特定的 crate
+
+# =====================================================================
+# 最佳实践提示
+# =====================================================================
+
+# 1. 与 Cargo.toml 配合使用：
+#    在 Cargo.toml 中配置 [lints.clippy] 设置 lint 级别
+#    在 clippy.toml 中配置 disallowed-methods/types/identifiers
+#
+# 2. Workspace 配置：
+#    将 clippy.toml 放在 workspace 根目录
+#    所有成员会继承此配置
+#
+# 3. CI/CD 集成：
+#    cargo clippy --all-targets --all-features -- -D warnings
+#
+# 4. 本地开发：
+#    cargo clippy --fix --allow-dirty  # 自动修复问题

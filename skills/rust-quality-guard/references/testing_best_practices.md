@@ -514,4 +514,55 @@ mod tests {
 - [ ] 测试边界条件和错误情况
 - [ ] 维护高测试覆盖率（目标 > 80%）
 - [ ] 运行 `cargo test --all-features` 确保所有 features 可测试
+- [ ] 如果项目使用 `test-utils` 特性，运行 `cargo test --features test-utils`
 - [ ] 使用 `cargo clippy` 和 `cargo fmt` 保持代码质量
+- [ ] 考虑使用 `cargo nextest` 获得更快的测试执行速度
+
+## 现代化测试工具
+
+### cargo nextest（推荐）
+
+[nextest](https://nexte.st) 是一个更快的测试运行器，与 cargo test 兼容：
+
+```bash
+# 安装
+cargo install cargo-nextest
+
+# 运行测试（比 cargo test 快）
+cargo nextest run
+
+# 运行特定测试
+cargo nextest run test_name
+
+# 启用 features
+cargo nextest run --features test-utils
+cargo nextest run --all-features
+
+# 查看测试输出
+cargo nextest run --success-output
+
+# 运行被忽略的测试
+cargo nextest run --ignore-rust-version
+```
+
+**优势**:
+- ✅ 更快的测试执行（并行化更好）
+- ✅ 更好的输出格式
+- ✅ 与 cargo test 兼容（无需修改测试代码）
+- ✅ 支持 CI/CD 集成
+
+### 使用 cargo llvm-cov 查看覆盖率
+
+```bash
+# 安装
+cargo install cargo-llvm-cov
+
+# 生成 HTML 覆盖率报告
+cargo llvm-cov --html
+
+# 启用 features
+cargo llvm-cov --html --features test-utils
+
+# 查看终端输出
+cargo llvm-cov --html --open
+```

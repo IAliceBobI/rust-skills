@@ -318,19 +318,71 @@ fn test_error_context() {
 }
 ```
 
-## Clippy Lint
+## Clippy Lint 配置
 
-启用严格的错误检查：
+启用严格的错误检查有多种方式：
+
+### 方式 1: 命令行参数
 
 ```bash
+# 临时启用严格检查
 cargo clippy -- -W clippy::unwrap_used -W clippy::expect_used
+
+# 将警告视为错误（CI 中推荐）
+cargo clippy -- -D warnings
 ```
 
-在 `clippy.toml`:
+### 方式 2: clippy.toml（推荐用于项目级配置）
 
 ```toml
-[warn-clippy]
-unwrap_used = "deny"
-expect_used = "deny"
-panic = "deny"
+# clippy.toml
+# 允许在测试中使用 unwrap/expect
+allow-expect-in-tests = true
+allow-unwrap-in-tests = true
+
+# 禁止的方法
+disallowed-methods = [
+    { path = "std::result::Result::unwrap", reason = "Use ? operator instead" },
+    { path = "std::option::Option::unwrap", reason = "Use ? operator or ok_or instead" },
+]
+```
+
+### 方式 3: Cargo.toml（推荐 2024+ 版本）
+
+```toml
+# Cargo.toml
+[lints.clippy]
+# Pedantic lints（更严格，但可能有误报）
+pedantic = "warn"
+
+# 禁止在生产代码中使用 unwrap/expect
+unwrap_used = "warn"
+expect_used = "warn"
+
+# 测试代码中允许（通过 clippy.toml 配置）
+```
+
+### Workspace 配置
+
+在 workspace 根目录的 `Cargo.toml` 中：
+
+```toml
+[workspace.lints.clippy]
+pedantic = "warn"
+unwrap_used = "warn"
+expect_used = "warn"
+
+# 然后在成员的 Cargo.toml 中继承
+[lints]
+workspace = true
+```
+
+### 自动修复
+
+```bash
+# 自动修复可修复的问题
+cargo clippy --fix
+
+# 允许在有未提交更改时修复
+cargo clippy --fix --allow-dirty
 ```

@@ -1,0 +1,299 @@
+# Cargo.toml
+#
+# Rust 项目配置模板（2026 最佳实践）
+#
+# 文档：
+# - https://doc.rust-lang.org/cargo/reference/manifest.html
+# - https://blog.rust-lang.org/inside-rust/2026/01/07/this-development-cycle-in-cargo-1.93/
+#
+# 最佳实践：
+# 1. 使用 [lints] 配置替代 .cargo/config.toml 中的 rustflags
+# 2. Workspace 项目使用 [workspace.lints] 统一配置
+# 3. 明确指定 Rust edition（2024 推荐）
+# 4. 使用语义化版本控制
+
+# =====================================================================
+# 包配置
+# =====================================================================
+
+[package]
+name = "my-project"
+version = "0.1.0"
+edition = "2024"  # 使用 2024 edition（推荐）
+rust-version = "1.83.0"  # 最低支持的 Rust 版本
+authors = ["Your Name <you@example.com>"]
+description = "项目描述"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/my-project"
+keywords = ["keyword1", "keyword2"]
+categories = ["category1", "category2"]
+readme = "README.md"
+
+# 自动发布配置
+# autopublish = false  # 不自动发布到 crates.io
+
+# 二进制文件配置
+# [[bin]]
+# name = "my-binary"
+# path = "src/main.rs"
+
+# =====================================================================
+# 依赖配置
+# =====================================================================
+
+[dependencies]
+# 异步运行时
+# tokio = { version = "1.40", features = ["full"] }
+
+# 错误处理
+# anyhow = "1.0"  # Binary 代码
+# thiserror = "1.0"  # Library 代码
+
+# 日志
+# tracing = "0.1"
+# tracing-subscriber = "0.3"
+
+# 序列化
+# serde = { version = "1.0", features = ["derive"] }
+
+# =====================================================================
+# 开发依赖
+# =====================================================================
+
+[dev-dependencies]
+# 测试框架
+# tokio-test = "0.4"
+
+# 断言库
+# pretty_assertions = "1.4"
+
+# Mock 工具
+# mockall = "0.13"
+
+# 测试覆盖率
+# cargo-llvm-cov = "0.6"  # 在工具链部分安装
+
+# =====================================================================
+# Features（特性）配置
+# =====================================================================
+
+[features]
+default = ["std"]  # 默认启用的特性
+
+# 测试辅助特性（不默认启用）
+test-utils = []
+
+# 特性组合
+full = ["std", "test-utils"]
+
+# 条件编译特性
+# std = []  # 使用标准库
+# alloc = []  # 仅使用 alloc（无 std）
+# no_std = []  # 嵌入式/裸机环境
+
+# 特性依赖关系
+# [dependencies.serde]
+# version = "1.0"
+# optional = true
+#
+# [features]
+# serialize = ["serde"]
+
+# =====================================================================
+# Lints 配置（推荐）
+# =====================================================================
+
+# ===== 编译器 Lints =====
+[lints.rust]
+# 内存安全（默认禁止）
+# unsafe_code = "forbid"  # 禁止 unsafe 代码（库项目推荐）
+
+# 文档
+missing_docs = "warn"  # 缺少文档时警告
+rust_2018_idioms = "warn"  # 检查 Rust 2018 惯用法
+rust_2021_compatibility = "warn"  # 检查 Rust 2021 兼容性
+rust_2024_compatibility = "warn"  # 检查 Rust 2024 兼容性
+
+# 未使用的代码
+unused_crate_dependencies = "warn"
+unused_extern_crates = "warn"
+unused_import_braces = "warn"
+unused_lifetimes = "warn"
+unused_qualifications = "warn"
+
+# 其他
+variant_size_differences = "warn"  # 检查 enum 变体大小差异
+
+# ===== Clippy Lints =====
+[lints.clippy]
+# Pedantic lints（更严格，但可能有误报）
+pedantic = "warn"
+
+# 错误处理
+unwrap_used = "warn"  # 禁止 unwrap（生产代码）
+expect_used = "warn"  # 禁止 expect（生产代码）
+panic = "warn"  # 禁止 panic
+
+# 性能
+perf = "warn"  # 性能相关警告
+style = "warn"  # 代码风格
+complexity = "warn"  # 代码复杂度
+
+# 正确性
+correctness = "warn"  # 正确性问题
+suspicious = "warn"  # 可疑代码
+
+# 可读性
+nursery = "warn"  # 实验性 lints（可能不稳定）
+
+# 允许的 pedantic lints（因为误报）
+# must_use_candidate = "allow"
+# missing_errors_doc = "allow"
+# missing_panics_doc = "allow"
+# module_name_repetitions = "allow"
+
+# Cargo.toml 中配置的 lint 级别
+# 可以通过 clippy.toml 配置更细致的控制
+
+# =====================================================================
+# 性能配置
+# =====================================================================
+
+[profile.dev]
+# 开发配置（默认继承自 release）
+# opt-level = 0  # 无优化
+# debug = true   # 包含调试信息
+
+[profile.release]
+# 发布配置
+opt-level = 3  # 最高优化
+lto = true  # 链接时优化
+codegen-units = 1  # 更好的优化，但编译更慢
+strip = true  # 移除符号（减小二进制大小）
+panic = "abort"  # 减小二进制大小
+overflow-checks = true  # 溢出检查
+
+# 分步优化配置
+[profile.release-dev]
+# 优化的开发配置
+inherits = "dev"
+opt-level = 2
+
+# 测试配置
+[profile.test]
+opt-level = 3  # 测试也优化（加快测试运行）
+
+# Benchmark 配置
+[profile.bench]
+inherits = "release"
+
+# =====================================================================
+# 构建配置
+# =====================================================================
+
+[build-dependencies]
+# 构建脚本依赖
+# cc = "1.0"
+
+# =====================================================================
+# Bin 配置（如果项目有多个 binary）
+# =====================================================================
+
+# [[bin]]
+# name = "binary1"
+# path = "src/bin1.rs"
+#
+# [[bin]]
+# name = "binary2"
+# path = "src/bin2.rs"
+
+# =====================================================================
+# 示例配置
+# =====================================================================
+
+# [[example]]
+# name = "example1"
+# path = "examples/example1.rs"
+
+# =====================================================================
+# 测试配置
+# =====================================================================
+
+# [[test]]
+# name = "integration"
+# path = "tests/integration.rs"
+
+# =====================================================================
+# Workspace 配置（如果这是 workspace 根）
+# =====================================================================
+
+# [workspace]
+# members = ["crate1", "crate2"]
+# resolver = "2"  # 使用 Cargo resolver v2
+#
+# [workspace.lints.rust]
+# missing_docs = "warn"
+# rust_2018_idioms = "warn"
+#
+# [workspace.lints.clippy]
+# pedantic = "warn"
+# unwrap_used = "warn"
+# expect_used = "warn"
+#
+# [workspace.dependencies]
+# # 在 workspace 中共享依赖版本
+# tokio = { version = "1.40", features = ["full"] }
+# anyhow = "1.0"
+# thiserror = "1.0"
+
+# =====================================================================
+# Target 配置（交叉编译）
+# =====================================================================
+
+# [target.x86_64-unknown-linux-gnu]
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# =====================================================================
+# 环境变量配置
+# =====================================================================
+
+# [env]
+# MY_ENV_VAR = "value"
+
+# =====================================================================
+# 元数据配置
+# =====================================================================
+
+[package.metadata.docs.rs]
+# docs.rs 构建配置
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+# =====================================================================
+# 最佳实践总结
+# =====================================================================
+
+# 1. Lints 配置：
+#    - 在 Cargo.toml 中使用 [lints] 配置（推荐）
+#    - Workspace 项目使用 [workspace.lints] 统一管理
+#    - 单个 crate 可以使用 [lints] workspace = true 继承
+#    - clippy.toml 用于配置 disallowed-methods/types/identifiers
+#
+# 2. Features：
+#    - 使用 test-utils 特性隔离测试辅助代码
+#    - 使用条件编译 #[cfg(feature = "test-utils")]
+#    - 测试时使用 --features test-utils
+#
+# 3. 性能配置：
+#    - release 使用 lto = true 和 codegen-units = 1
+#    - test 使用 opt-level = 3 加快测试运行
+#
+# 4. 依赖管理：
+#    - 在 workspace 中使用 [workspace.dependencies] 统一版本
+#    - 明确指定 features 而不是使用 "full"
+#
+# 5. 版本管理：
+#    - 使用语义化版本（SemVer）
+#    - 遵循 Cargo 兼容性承诺
+#    - 使用 rust-version 指定最低 Rust 版本
