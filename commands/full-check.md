@@ -24,6 +24,37 @@ cargo --version
 uname -a
 ```
 
+#### 检测测试工具
+
+```bash
+# 检测是否安装 cargo-nextest
+if command -v cargo-nextest &> /dev/null; then
+    echo "✅ 检测到 cargo-nextest，将使用 nextest 运行测试"
+    USE_NEXTEST=true
+else
+    echo "ℹ️  未检测到 cargo-nextest，将使用 cargo test"
+    USE_NEXTEST=false
+fi
+
+# 检测是否有 nextest 配置
+if [ -f ".config/nextest.toml" ]; then
+    echo "✅ 检测到 nextest 配置文件: .config/nextest.toml"
+    HAS_NEXTEST_CONFIG=true
+else
+    echo "ℹ️  未检测到 nextest 配置文件"
+    HAS_NEXTEST_CONFIG=false
+fi
+
+# 检测 test-utils 特性
+if grep -r "test-utils" --include="Cargo.toml" . &> /dev/null; then
+    echo "✅ 检测到 test-utils 特性"
+    USE_TEST_UTILS="--features test-utils"
+else
+    echo "ℹ️  未检测到 test-utils 特性"
+    USE_TEST_UTILS=""
+fi
+```
+
 ### 步骤 1: 全面代码检查
 
 执行 cargo check 进行全面的编译检查：
@@ -52,12 +83,7 @@ cargo check --workspace --all-targets --tests --examples 2>&1 | tee /tmp/cargo_c
 
 ### 步骤 1.5: 检测 test-utils 特性
 
-在运行测试前,先检查项目是否使用了 `test-utils` 特性:
-
-```bash
-# 检查 Cargo.toml 中是否声明了 test-utils 特性
-grep -r "test-utils" --include="Cargo.toml" . || echo "未找到 test-utils 特性"
-```
+**注意**: 此步骤已在步骤 0 中自动完成。
 
 **如果项目使用了 test-utils 特性**:
 - 在所有 `cargo check` 和 `cargo test` 命令中添加 `--features test-utils`
@@ -68,16 +94,39 @@ grep -r "test-utils" --include="Cargo.toml" . || echo "未找到 test-utils 特�
 
 ### 步骤 2: 运行所有测试
 
+根据步骤 0 的检测结果，自动选择最佳测试工具：
+
+#### 使用 cargo-nextest (推荐)
+
+如果检测到 `cargo-nextest`：
+
 ```bash
 unset RUST_BACKTRACE
-# 如果项目使用了 test-utils 特性,添加 --features test-utils
-cargo test --workspace --no-fail-fast 2>&1 | tee /tmp/cargo_test_output.txt
+cargo nextest run \
+    --workspace \
+    $USE_TEST_UTILS \
+    --no-fail-fast \
+    --failure-output=immediate \
+    --success-output=never 2>&1 | tee /tmp/nextest_output.txt
+```
+
+#### 使用 cargo test (fallback)
+
+如果没有检测到 `cargo-nextest`：
+
+```bash
+unset RUST_BACKTRACE
+cargo test \
+    --workspace \
+    $USE_TEST_UTILS \
+    --no-fail-fast 2>&1 | tee /tmp/cargo_test_output.txt
 ```
 
 **重要：**
+- 优先使用 `cargo-nextest`（性能提升 20-30%）
 - 使用 `--no-fail-fast` 确保所有测试都运行
 - 使用 `unset RUST_BACKTRACE` 避免过多输出
-- 如果项目使用 test-utils 特性,必须添加 `--features test-utils`
+- 自动应用 test-utils 特性（如果检测到）
 - 记录所有测试结果
 - 统计通过/失败/跳过的测试数量
 
@@ -124,14 +173,30 @@ cargo test --workspace --no-fail-fast 2>&1 | tee /tmp/cargo_test_output.txt
 
 2. **单独执行每个失败的测试**
 
+#### 使用 cargo-nextest (推荐)
+
+如果检测到 `cargo-nextest`：
+
+```bash
+RUST_BACKTRACE=1 cargo nextest run \
+    --test-name <test_name> \
+    --no-capture \
+    --failure-output=immediate \
+    $USE_TEST_UTILS
+```
+
+#### 使用 cargo test (fallback)
+
+如果没有检测到 `cargo-nextest`：
+
 对于集成测试：
 ```bash
-RUST_BACKTRACE=1 cargo test --test <test_file> --no-capture --no-fail-fast
+RUST_BACKTRACE=1 cargo test --test <test_file> --no-capture --no-fail-fast $USE_TEST_UTILS
 ```
 
 对于特定测试：
 ```bash
-RUST_BACKTRACE=1 cargo test --test <test_file> <test_name> --no-capture -- --exact
+RUST_BACKTRACE=1 cargo test --test <test_file> <test_name> --no-capture -- --exact $USE_TEST_UTILS
 ```
 
 **对比分析**：
@@ -150,6 +215,9 @@ RUST_BACKTRACE=1 cargo test --test <test_file> <test_name> --no-capture -- --exa
 - **Workspace**: [所有 crate 名称]
 - **总体状态**: [通过/失败/部分通过]
 - **环境信息**: [Rust 版本 / Cargo 版本 / OS]
+- **测试工具**: [cargo-nextest / cargo test]
+- **test-utils 特性**: [已启用 / 未启用]
+- **nextest 配置**: [已检测到 / 未检测到]
 
 ### 🔍 步骤 1: Cargo Check 结果
 
