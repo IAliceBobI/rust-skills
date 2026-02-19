@@ -1,6 +1,6 @@
 # Myskills
 
-Myskills is a fork of [Superpowers](https://github.com/obra/superpowers) - a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
+Myskills is a fork of [myskills](https://github.com/obra/myskills) - a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
 
 ## How it works
 
@@ -12,12 +12,12 @@ After you've signed off on the design, your agent puts together an implementatio
 
 Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
 
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superpowers.
+There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has myskills.
 
 
 ## Sponsorship
 
-This is a fork of Superpowers. If you find this fork helpful, please consider [sponsoring the original Superpowers project](https://github.com/sponsors/obra).
+This is a fork of myskills. If you find this fork helpful, please consider [sponsoring the original myskills project](https://github.com/sponsors/obra).
 
 
 ## Installation
@@ -58,7 +58,7 @@ Check that commands appear:
 Tell Codex:
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskills/refs/heads/main/.codex/INSTALL.md
 ```
 
 **Detailed docs:** [docs/README.codex.md](docs/README.codex.md)
@@ -68,7 +68,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/superp
 Tell OpenCode:
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskills/refs/heads/main/.opencode/INSTALL.md
 ```
 
 **Detailed docs:** [docs/README.opencode.md](docs/README.opencode.md)
@@ -115,7 +115,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/superp
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **using-superpowers** - Introduction to the skills system
+- **using-myskills** - Introduction to the skills system
 
 ## Philosophy
 
@@ -124,7 +124,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/superp
 - **Complexity reduction** - Simplicity as primary goal
 - **Evidence over claims** - Verify before declaring success
 
-Read more: [Superpowers for Claude Code](https://blog.fsck.com/2025/10/09/superpowers/)
+Read more: [myskills for Claude Code](https://blog.fsck.com/2025/10/09/myskills/)
 
 ## Contributing
 
@@ -151,6 +151,6 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-- **Original Project**: https://github.com/obra/superpowers
+- **Original Project**: https://github.com/obra/myskills
 - **This Fork**: https://github.com/IAliceBobI/myskills
 - **Marketplace**: https://github.com/IAliceBobI/my-marketplace

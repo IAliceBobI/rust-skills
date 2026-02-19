@@ -241,7 +241,5 @@ rg --files -g '*.rs' --no-ignore-vcs | xargs wc -l | sort -rn | head -20
 
 ## 相关技能
 
-- `superpowers:brainstorming` - 重构前规划架构
-- `superpowers:writing-plans` - 制定详细重构计划
-- `superpowers:test-driven-development` - 使用 TDD 安全重构
+- `myskills:brainstorming` - 重构前规划架构
 - `myskills:rust-quality-guard` - Rust 项目特定重构建议
