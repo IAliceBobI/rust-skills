@@ -97,7 +97,7 @@ cargo test \
 ## 详细文档
 
 更多测试最佳实践和调试技巧，请参考：
-- `myskills:rust-quality-guard` skill
+- `rust-skills:rust-quality-guard` skill
 - `references/testing_best_practices.md` - 测试最佳实践
 - `references/error_handling_patterns.md` - 错误处理模式
 

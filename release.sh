@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Release script for myskills
+# Release script for rust-skills
 # Updates version in plugin.json and work.md, then commits and pushes
 
 set -e

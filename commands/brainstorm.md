@@ -3,4 +3,4 @@ description: "You MUST use this before any creative work - creating features, bu
 disable-model-invocation: true
 ---
 
-Invoke the myskills:brainstorming skill and follow it exactly as presented to you
+Invoke the rust-skills:brainstorming skill and follow it exactly as presented to you

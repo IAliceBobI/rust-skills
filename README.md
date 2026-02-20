@@ -1,6 +1,6 @@
-# Myskills
+# rust-skills
 
-Myskills is a fork of [myskills](https://github.com/obra/myskills) - a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
+rust-skills is a fork of [rust-skills](https://github.com/obra/rust-skills) - a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
 
 ## How it works
 
@@ -12,12 +12,12 @@ After you've signed off on the design, your agent puts together an implementatio
 
 Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
 
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has myskills.
+There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has rust-skills.
 
 
 ## Sponsorship
 
-This is a fork of myskills. If you find this fork helpful, please consider [sponsoring the original myskills project](https://github.com/sponsors/obra).
+This is a fork of rust-skills. If you find this fork helpful, please consider [sponsoring the original rust-skills project](https://github.com/sponsors/obra).
 
 
 ## Installation
@@ -35,7 +35,7 @@ In Claude Code, register the marketplace first:
 Then install the plugin from this marketplace:
 
 ```bash
-/plugin install myskills@my-marketplace
+/plugin install rust-skills@my-marketplace
 ```
 
 ### Verify Installation
@@ -48,9 +48,9 @@ Check that commands appear:
 
 ```
 # Should see:
-# /myskills:brainstorm - Interactive design refinement
-# /myskills:write-plan - Create implementation plan
-# /myskills:execute-plan - Execute plan in batches
+# /rust-skills:brainstorm - Interactive design refinement
+# /rust-skills:write-plan - Create implementation plan
+# /rust-skills:execute-plan - Execute plan in batches
 ```
 
 ### Codex
@@ -58,7 +58,7 @@ Check that commands appear:
 Tell Codex:
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskills/refs/heads/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/obra/rust-skills/refs/heads/main/.codex/INSTALL.md
 ```
 
 **Detailed docs:** [docs/README.codex.md](docs/README.codex.md)
@@ -68,7 +68,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskil
 Tell OpenCode:
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskills/refs/heads/main/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/obra/rust-skills/refs/heads/main/.opencode/INSTALL.md
 ```
 
 **Detailed docs:** [docs/README.opencode.md](docs/README.opencode.md)
@@ -115,7 +115,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskil
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **using-myskills** - Introduction to the skills system
+- **using-rust-skills** - Introduction to the skills system
 
 ## Philosophy
 
@@ -124,7 +124,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/myskil
 - **Complexity reduction** - Simplicity as primary goal
 - **Evidence over claims** - Verify before declaring success
 
-Read more: [myskills for Claude Code](https://blog.fsck.com/2025/10/09/myskills/)
+Read more: [rust-skills for Claude Code](https://blog.fsck.com/2025/10/09/rust-skills/)
 
 ## Contributing
 
@@ -142,7 +142,7 @@ See `skills/writing-skills/SKILL.md` for the complete guide.
 Skills update automatically when you update the plugin:
 
 ```bash
-/plugin update myskills
+/plugin update rust-skills
 ```
 
 ## License
@@ -151,6 +151,6 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-- **Original Project**: https://github.com/obra/myskills
-- **This Fork**: https://github.com/IAliceBobI/myskills
+- **Original Project**: https://github.com/obra/rust-skills
+- **This Fork**: https://github.com/IAliceBobI/rust-skills
 - **Marketplace**: https://github.com/IAliceBobI/my-marketplace

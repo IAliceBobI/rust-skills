@@ -496,7 +496,7 @@ cargo nextest run
 ## 详细文档
 
 更多最佳实践和示例，请参考：
-- `myskills:rust-quality-guard` skill
+- `rust-skills:rust-quality-guard` skill
 - `references/error_handling_patterns.md` - 错误处理模式
 - `references/testing_best_practices.md` - 测试最佳实践
 
