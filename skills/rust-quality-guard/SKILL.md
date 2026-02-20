@@ -281,7 +281,7 @@ cargo test --all-features
 2. 添加 `-- --nocapture` 查看测试输出
 3. 如果可以自动修复，按照建议修改代码
 4. 重新运行测试验证修复
-5. 如果问题复杂，查看 `references/testing_best_practices.md` 寻求帮助
+5. 如果问题复杂，查看 `$CLAUDE_PLUGIN_ROOT/references/testing_best_practices.md` 寻求帮助
 
 ### 场景 4: CI/CD 集成
 
@@ -808,15 +808,15 @@ cargo fmt --all
   - `cargo fmt --check`: 检查格式（不修改文件）
   - `cargo fmt --all`: 格式化所有 workspace 成员
 
-### references/
+### References
 
-- `error_handling_patterns.md`: 错误处理最佳实践
+- `$CLAUDE_PLUGIN_ROOT/references/error_handling_patterns.md`: 错误处理最佳实践
   - FAIL FAST 原则详细说明
   - 错误类型选择指南
   - 常见错误处理模式
   - 错误日志记录模式
 
-- `testing_best_practices.md`: 测试最佳实践
+- `$CLAUDE_PLUGIN_ROOT/references/testing_best_practices.md`: 测试最佳实践
   - 测试组织策略
   - 命名规范
   - Mock 和测试替身
