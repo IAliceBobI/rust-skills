@@ -278,7 +278,7 @@ cargo test --all-features
 ### 场景 3: 调试测试失败
 
 1. 运行 `cargo test <test_name>` 单独执行失败的测试
-2. 添加 `-- --nocapture` 查看测试输出
+2. 添加 `-- --no-capture` 查看测试输出
 3. 如果可以自动修复，按照建议修改代码
 4. 重新运行测试验证修复
 5. 如果问题复杂，查看 `$CLAUDE_PLUGIN_ROOT/references/testing_best_practices.md` 寻求帮助

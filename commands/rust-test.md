@@ -19,8 +19,10 @@ tags:
 # 如果项目使用 test-utils 特性
 cargo nextest run --features test-utils {{name}}
 
+有的项目没有 test-utils 特性，我们使用： cargo nextest run --all-features {{name}}
+
 # 或使用 cargo test
-cargo test --features test-utils -- {{name}} --exact --nocapture
+cargo test --all-features -- {{name}} --exact --no-capture
 ```
 
 ## test-utils 特性
@@ -91,7 +93,7 @@ cargo test \
     --package <package> \
     --test <file> \
     --features test-utils \
-    -- {{name}} --exact --nocapture
+    -- {{name}} --exact --no-capture
 ```
 
 ## 详细文档
@@ -105,7 +107,7 @@ cargo test \
 
 - 测试名称必须完全匹配
 - 支持 `#[test]` 和 `#[tokio::test]` 等测试宏
-- `--no-capture` / `--nocapture` 选项会显示 println! 输出
+- `--no-capture` / `--no-capture` 选项会显示 println! 输出
 - 如果找不到测试，会提示检查名称
 
 ## 常见问题

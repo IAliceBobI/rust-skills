@@ -884,7 +884,7 @@ A:
 
 A:
 1. 查看测试失败的详细信息
-2. 使用 `cargo test -- --nocapture` 查看测试输出
+2. 使用 `cargo test -- --no-capture` 查看测试输出
 3. 使用 `cargo nextest run --test-name` 运行特定测试
 4. 添加日志或使用 debugger 调试
 
